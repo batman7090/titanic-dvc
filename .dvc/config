@@ -1,0 +1,5 @@
+[core]
+    remote = localremote
+    autostage = true
+['remote "localremote"']
+    url = /tmp/dvc-remote
