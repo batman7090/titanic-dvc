@@ -1,5 +1,5 @@
 prepare:
-  drop_outliers_fares: true
+  drop_outlier_fares: true
 
 split:
   test_size: 0.2

@@ -1,0 +1,58 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+      - data/raw/titanic.csv
+    params:
+      - prepare.drop_outlier_fares
+    outs:
+      - data/prepared
+
+  split:
+    cmd: python src/split.py
+    deps:
+      - src/split.py
+      - data/prepared
+    params:
+      - split.test_size
+      - split.seed
+    outs:
+      - data/split
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/split/train.csv
+    params:
+      - train
+      - split.seed
+    outs:
+      - models/model.pkl
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - models/model.pkl
+      - data/split/test.csv
+    metrics:
+      - metrics.json:
+          cache: false
+    plots:
+      - evaluation/roc.json:
+          cache: false
+          x: fpr
+          y: tpr
+          title: ROC curve
+      - evaluation/confusion.json:
+          cache: false
+          template: confusion
+          x: actual
+          y: predicted
+      - evaluation/importance.json:
+          cache: false
+          template: bar_horizontal
+          x: importance
+          y: feature
