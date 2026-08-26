@@ -13,9 +13,9 @@ def main() -> None:
     df = pd.read_csv(IN)
     train, test = train_test_split(
         df,
-        test_size=["test_size"],
-        random_state=params["random_state"],
-        stratify=df["Survived"]
+        test_size=params["test_size"],
+        random_state=params["seed"],
+        stratify=df["Survived"],
     )
 
     os.makedirs(OUT, exist_ok=True)

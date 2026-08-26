@@ -16,14 +16,14 @@ def main() -> None:
     df = pd.read_csv(RAW)
 
     df["Title"] = df['Name'].apply(extract_title)
-    df["FamilySize"] = df["Sibsp"] + df["Parch"] + 1
+    df["FamilySize"] = df["SibSp"] + df["Parch"] + 1
     df["IsAlone"] = (df["FamilySize"] == 1).astype(int)
     df["HasVabin"] = df["Cabin"].notna().astype(int)
 
-    df["Age"] = df.groupby(["Title", "Pclass"])["Title", "Pclass"].transform(
+    df["Age"] = df.groupby(["Title", "Pclass"])["Age"].transform(
         lambda s: s.fillna(s.median())
     )
-    df["Age"] = df["Age"].fillna(df["Age"].medain())
+    df["Age"] = df["Age"].fillna(df["Age"].median())
     df["Fare"] = df["Fare"].fillna(df["Fare"].median())
     df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
 

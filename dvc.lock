@@ -1,0 +1,102 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: data/raw/titanic.csv
+      hash: md5
+      md5: a9fab5d963c8459300dbd5693e295e50
+      size: 29474
+    - path: src/prepare.py
+      hash: md5
+      md5: 17e69becf02ca6d9c8fee28bf5c4139c
+      size: 1491
+    params:
+      params.yaml:
+        prepare.drop_outlier_fares: true
+    outs:
+    - path: data/prepared
+      hash: md5
+      md5: d6d89771100d25618b1d66c33ef3f91e.dir
+      size: 26240
+      nfiles: 1
+  split:
+    cmd: python src/split.py
+    deps:
+    - path: data/prepared
+      hash: md5
+      md5: d6d89771100d25618b1d66c33ef3f91e.dir
+      size: 26240
+      nfiles: 1
+    - path: src/split.py
+      hash: md5
+      md5: 71bef53251f1dcb14e23ff29e7bbe13f
+      size: 636
+    params:
+      params.yaml:
+        split.seed: 42
+        split.test_size: 0.2
+    outs:
+    - path: data/split
+      hash: md5
+      md5: 21b469213b13bac97cbb77d360e882ba.dir
+      size: 27937
+      nfiles: 2
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/split/train.csv
+      hash: md5
+      md5: b1184830a9f9ae031c6fc96ca87e0a71
+      size: 22237
+    - path: src/train.py
+      hash: md5
+      md5: 2bd4d096a97cce49f92896fde262378c
+      size: 1681
+    params:
+      params.yaml:
+        split.seed: 42
+        train:
+          model_type: logistic_regression
+          n_estimators: 300
+          max_depth: 2
+          min_samples_leaf: 1
+          learning_rate: 0.08
+          C: 0.5
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 0efceadfdb4adecf2620abac7e49b3eb
+      size: 1896
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/split/test.csv
+      hash: md5
+      md5: 0238ba726463fd4e7370b1ac8c6bf89e
+      size: 5700
+    - path: models/model.pkl
+      hash: md5
+      md5: 0efceadfdb4adecf2620abac7e49b3eb
+      size: 1896
+    - path: src/evaluate.py
+      hash: md5
+      md5: 8b1a703cbc222194d8697b029c193022
+      size: 2060
+    outs:
+    - path: evaluation/confusion.json
+      hash: md5
+      md5: 6d978238c5f819284705aecec477a823
+      size: 2940
+    - path: evaluation/importance.json
+      hash: md5
+      md5: 0b759c342a48bdc8540226d8f5bcb039
+      size: 738
+    - path: evaluation/roc.json
+      hash: md5
+      md5: 84fc09aace1f86ab5d95d870f00c62ac
+      size: 120
+    - path: metrics.json
+      hash: md5
+      md5: 39f589ef824d6578581b091b99100d60
+      size: 95
