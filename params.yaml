@@ -1,0 +1,14 @@
+prepare:
+  drop_outliers_fares: true
+
+split:
+  test_size: 0.2
+  seed: 42
+
+train:
+  model_type: logistic_regression # random_forest | gradient_boosing | logistic_regression
+  n_estimators: 300
+  max_depth: 2
+  min_samples_leaf: 1
+  learning_rate: 0.08
+  C: 0.5
